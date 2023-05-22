@@ -1,51 +1,87 @@
-import React from "react";
+import axios from "axios";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
+function Show_Data() {
+  const [show, setShow] = useState([]);
+  async function Show_detail() {
+    try {
+      const result = await axios.get(
+        "https://localhost:7207/Employee/GetEmployee"
+      );
+      setShow(result.data);
+      console.log(result.data);
+    } catch (err) {
+      alert(err);
+    }
+  }
+  useEffect(() => {
+    (async () => await Show_detail())();
+  }, []);
 
-const Show_Data = () => {
-
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`https://localhost:7207/Employee/${id}`);
+      alert("Delete data successfully");
+      Show_detail(); 
+      // Assuming this function exists and handles the update of UI or data display
+    } catch (err) {
+      alert(err);
+    }
+  }
   return (
     <div className="container py-3">
       <div className="card text-center bg-info">
         <h4 className="mt-1">Preview Data</h4>
       </div>
       <div className="row  mt-3">
-      <div className="col-md-2">
-        <Link to="/create_data" className="btn btn-sm btn-primary" relative="path">
-      Create Data
-        </Link>
+        <div className="col-md-2">
+          <Link
+            to="/create_data"
+            className="btn btn-sm btn-primary"
+            relative="path"
+          >
+            Create Data
+          </Link>
         </div>
         <div className="card bg-light mt-3">
-      <div className="col-md-12 py-3">
-          <table class="table">
-            <thead>
-              <tr>
-                <th scope="col">#</th>
-                <th scope="col">First</th>
-                <th scope="col">Last</th>
-                <th scope="col">Handle</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <th scope="row">1</th>
-                <td>Mark</td>
-                <td>Otto</td>
-                <td>@mdo</td>
-              </tr>
-              <tr>
-                <th scope="row">2</th>
-                <td>Jacob</td>
-                <td>Thornton</td>
-                <td>@fat</td>
-              </tr>
-              
-            </tbody>
-          </table>
-        </div>
+          <div className="col-md-12 py-3">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th scope="col">Empno</th>
+                  <th scope="col">Name</th>
+                  <th scope="col">Email</th>
+                  <th scope="col"></th>
+                  <th scope="col"></th>
+                </tr>
+              </thead>
+              {show.map(function fn(emp) {
+                return (
+                  <tbody>
+                    <tr key={emp.id}>
+                      <td>{emp.empno}</td>
+                      <td>{emp.name}</td>
+                      <td>{emp.email}</td>
+                      <td>
+                        <Link to="/create_data" relative="path">
+                          Edit
+                        </Link>
+                      </td>
+                      <td>
+                        <Link onClick={() => handleDelete(emp.id)} relative="path">
+                          Delete
+                        </Link>
+                      </td>
+                    </tr>
+                  </tbody>
+                );
+              })}
+            </table>
+          </div>
         </div>
       </div>
     </div>
   );
-};
+}
 export default Show_Data;
