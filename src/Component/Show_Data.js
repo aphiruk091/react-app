@@ -21,13 +21,20 @@ function Show_Data() {
 
   const handleDelete = async (id) => {
     try {
+      const confirmDelete = window.confirm('Are you sure you want to delete?');
+      if (confirmDelete) {
       await axios.delete(`https://localhost:7207/Employee/${id}`);
       alert("Delete data successfully");
       Show_detail(); 
-      // Assuming this function exists and handles the update of UI or data display
-    } catch (err) {
+      }
+    } 
+    catch (err) {
       alert(err);
     }
+  };
+ 
+  const handleEdit = async(id)=>{
+    window.location = '/update_data/'+id;
   }
   return (
     <div className="container py-3">
@@ -64,7 +71,7 @@ function Show_Data() {
                       <td>{emp.name}</td>
                       <td>{emp.email}</td>
                       <td>
-                        <Link to="/create_data" relative="path">
+                        <Link onClick={() => handleEdit(emp.id)} relative="path">
                           Edit
                         </Link>
                       </td>
